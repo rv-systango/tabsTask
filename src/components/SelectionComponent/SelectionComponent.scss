@@ -1,0 +1,89 @@
+.selection-container {
+  display: flex;
+
+  .selection-listarea {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    & input[type="text"] {
+      display: flex;
+      border: 1px solid rgb(189, 199, 211);
+      outline: none;
+      padding: 10px 8px;
+      border-radius: 7px;
+    }
+
+    & .selection-itemslist {
+      display: flex;
+      flex-direction: column;
+      & .header-container {
+        display: flex;
+        justify-content: space-evenly;
+        margin: 10px 0px;
+        & > div {
+          width: 100%;
+          color: slategray;
+          font-size: 14px;
+          text-transform: capitalize;
+          font-weight: 700;
+        }
+      }
+      & .list-item {
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 8px;
+        & > div {
+          width: 100%;
+          color: rgb(68, 78, 88);
+          font-size: 14px;
+          text-transform: capitalize;
+
+          & input[type="checkbox"] {
+            margin-right: 5px;
+          }
+          & label {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  .selection-selectedarea {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 25%;
+    min-width: 200px;
+    padding: 5px 15px;
+    & .title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.selected-items {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px 0px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+  color: rgb(49, 59, 68);
+  & .cross-bt {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgb(73, 61, 61);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    &:hover {
+      color: darkred;
+    }
+  }
+}

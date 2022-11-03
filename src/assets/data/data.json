@@ -1,0 +1,29 @@
+{
+  "permissions": [
+    {
+      "id": 10001,
+      "permission": "Access Management",
+      "description": "Manage users."
+    },
+    {
+      "id": 10002,
+      "permission": "Manage Creatives",
+      "description": "Upload traffic creative assets."
+    },
+    {
+      "id": 10003,
+      "permission": "Buy Billing Report",
+      "description": "View monthly summary of spend and fees."
+    },
+    {
+      "id": 10004,
+      "permission": "New brand creation",
+      "description": "Create new manufacturers and brands."
+    },
+    {
+      "id": 10005,
+      "permission": "Update product",
+      "description": "Update product basic information."
+    }
+  ]
+}
