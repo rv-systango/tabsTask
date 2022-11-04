@@ -43,36 +43,23 @@ export default function MultiSelection({
           />
           <label htmlFor={`item-i${i.id}`}>{i[keys[0] || "-"]}</label>
         </div>
-        {keys &&
-          keysLength &&
-          keys.map((k, m) => {
-            return m > 0 ? (
-              <div key={k}>
-                {(() => {
-                  if (i[k] && typeof i[k] === "object") {
-                    const subArrray = i[k];
-                    return subArrray.map((j, index) => {
-                      return (
-                        <div>
-                          <input
-                            id={`subitem-${index}-${j.id}`}
-                            type="checkbox"
-                          />
-                          <label htmlFor={`subitem-${index}-${j.id}`}>
-                            {j.title}
-                          </label>
-                        </div>
-                      );
-                    });
-                  } else {
-                    return i[k || "-"];
-                  }
-                })()}
-              </div>
-            ) : (
-              <></>
-            );
-          })}
+        <div>
+          {(() => {
+            if (i["description"] && typeof i["description"] === "object") {
+              const subArrray = i["description"];
+              return subArrray.map((j, index) => {
+                return (
+                  <div>
+                    <input id={`subitem-${j.id}`} type="checkbox" />
+                    <label htmlFor={`subitem-${j.id}`}>{j.title}</label>
+                  </div>
+                );
+              });
+            } else {
+              return <></>;
+            }
+          })()}
+        </div>
       </div>
     );
   }
@@ -85,13 +72,16 @@ export default function MultiSelection({
           <div className="d-flex flex-column w-100">
             {i.description.map((item, index) => {
               return (
-                <div style={{display: "bock"}}>
+                <div style={{ display: "bock" }}>
                   <input
-                  style={{marginRight: "3px"}}
+                    style={{ marginRight: "3px" }}
                     id={`selectedsubitem-${index}-${item.id}`}
                     type="checkbox"
                   />
-                  <label style={{fontSize: "13px"}} htmlFor={`selectedsubitem-${index}-${item.id}`}>
+                  <label
+                    style={{ fontSize: "13px" }}
+                    htmlFor={`selectedsubitem-${index}-${item.id}`}
+                  >
                     {item.title}
                   </label>
                 </div>
