@@ -15,7 +15,7 @@ export default function MultiSelection({
   appstate_key = "permissions",
 }) {
   const { appState, setAppState } = useContext(AppContext);
-  const [filterdData, setFilteredData] = useState(data);
+  const [filterdData, setFilteredData] = useState([...data]);
   const [open, setOpen] = useState("1");
 
   const toggle = (id) => {
@@ -38,7 +38,11 @@ export default function MultiSelection({
           <input
             id={`item-i${i.id}`}
             type="checkbox"
-            checked={JSON.stringify(appState[appstate_key]).includes(i.id) ? true : false}
+            checked={
+              JSON.stringify(appState[appstate_key]).includes(i.id)
+                ? true
+                : false
+            }
             onChange={(e) => onCheckChange(e.target.checked, i)}
           />
           <label htmlFor={`item-i${i.id}`}>{i[keys[0] || "-"]}</label>
@@ -50,7 +54,16 @@ export default function MultiSelection({
               return subArrray.map((j, index) => {
                 return (
                   <div>
-                    <input id={`subitem-${j.id}`} type="checkbox" checked={JSON.stringify(appState[appstate_key]).includes(j.id) ? true : false} />
+                    <input
+                      id={`subitem-${j.id}`}
+                      type="checkbox"
+                      onChange={() => removeSubItem(i.id, j)}
+                      checked={
+                        JSON.stringify(appState[appstate_key]).includes(j.id)
+                          ? true
+                          : false
+                      }
+                    />
                     <label htmlFor={`subitem-${j.id}`}>{j.title}</label>
                   </div>
                 );
@@ -62,6 +75,26 @@ export default function MultiSelection({
         </div>
       </div>
     );
+  }
+
+  function removeSubItem(itemid, subitem) {
+    const d = JSON.parse(JSON.stringify(appState[appstate_key]));
+    const newState = [];
+    let selectedItem = null;
+    let updatedD = {};
+    d.forEach((i) => {
+      if (i.id === itemid) {
+        selectedItem = i;
+        updatedD = i.description.filter((k) => k.id !== subitem.id);
+      } else {
+        newState.push(i);
+      }
+    });
+    if (selectedItem) {
+      selectedItem.description = updatedD;
+    }
+    if (updatedD.length) newState.push(selectedItem);
+    setAppState((s) => ({ ...s, [appstate_key]: newState }));
   }
 
   function getSelected(i, n) {
@@ -76,7 +109,12 @@ export default function MultiSelection({
                   <input
                     style={{ marginRight: "3px" }}
                     id={`selectedsubitem-${index}-${item.id}`}
-                    checked={JSON.stringify(appState[appstate_key]).includes(item.id) ? true : false}
+                    checked={
+                      JSON.stringify(appState[appstate_key]).includes(item.id)
+                        ? true
+                        : false
+                    }
+                    onChange={() => removeSubItem(i.id, item)}
                     type="checkbox"
                   />
                   <label
@@ -104,12 +142,6 @@ export default function MultiSelection({
       setAppState((s) => ({ ...s, [appstate_key]: [...updated] }));
     }
     console.log(data);
-  }
-
-  function removeItem(id) {
-    const prev = appState[appstate_key];
-    const updated = prev.filter((i) => i.id !== id);
-    setAppState((s) => ({ ...s, [appstate_key]: [...updated] }));
   }
 
   function onSearch(e) {
