@@ -38,7 +38,7 @@ export default function MultiSelection({
           <input
             id={`item-i${i.id}`}
             type="checkbox"
-            checked={appState[appstate_key].includes(i) ? true : false}
+            checked={JSON.stringify(appState[appstate_key]).includes(i.id) ? true : false}
             onChange={(e) => onCheckChange(e.target.checked, i)}
           />
           <label htmlFor={`item-i${i.id}`}>{i[keys[0] || "-"]}</label>
@@ -50,7 +50,7 @@ export default function MultiSelection({
               return subArrray.map((j, index) => {
                 return (
                   <div>
-                    <input id={`subitem-${j.id}`} type="checkbox" />
+                    <input id={`subitem-${j.id}`} type="checkbox" checked={JSON.stringify(appState[appstate_key]).includes(j.id) ? true : false} />
                     <label htmlFor={`subitem-${j.id}`}>{j.title}</label>
                   </div>
                 );
@@ -76,6 +76,7 @@ export default function MultiSelection({
                   <input
                     style={{ marginRight: "3px" }}
                     id={`selectedsubitem-${index}-${item.id}`}
+                    checked={JSON.stringify(appState[appstate_key]).includes(item.id) ? true : false}
                     type="checkbox"
                   />
                   <label
