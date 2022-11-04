@@ -1,16 +1,30 @@
-import { Tooltip } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
+import {
+  Accordion,
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+} from "reactstrap";
 import { AppContext } from "../../App";
-import "./SelectionComponent.scss";
+import "./MultiSelection.scss";
 
 // datatype can be : single/tree
-export default function SelectionComponent({
+export default function MultiSelection({
   data = [],
   keys = [],
   appstate_key = "permissions",
 }) {
   const { appState, setAppState } = useContext(AppContext);
   const [filterdData, setFilteredData] = useState(data);
+  const [open, setOpen] = useState("1");
+
+  const toggle = (id) => {
+    if (open === id) {
+      setOpen();
+    } else {
+      setOpen(id);
+    }
+  };
 
   function genHeadings(i, n) {
     return <div key={`header-i${n}`}>{i}</div>;
@@ -32,7 +46,32 @@ export default function SelectionComponent({
         {keys &&
           keysLength &&
           keys.map((k, m) => {
-            return m > 0 ? <div key={k}>{i[k || "-"]}</div> : <></>;
+            return m > 0 ? (
+              <div key={k}>
+                {(() => {
+                  if (i[k] && typeof i[k] === "object") {
+                    const subArrray = i[k];
+                    return subArrray.map((j, index) => {
+                      return (
+                        <div>
+                          <input
+                            id={`subitem-${index}-${j.id}`}
+                            type="checkbox"
+                          />
+                          <label htmlFor={`subitem-${index}-${j.id}`}>
+                            {j.title}
+                          </label>
+                        </div>
+                      );
+                    });
+                  } else {
+                    return i[k || "-"];
+                  }
+                })()}
+              </div>
+            ) : (
+              <></>
+            );
           })}
       </div>
     );
@@ -40,12 +79,27 @@ export default function SelectionComponent({
 
   function getSelected(i, n) {
     return (
-      <div className="selected-items" key={`selecteditem-i${i.id}`}>
-        {i[keys[0]]}
-        <span className="cross-bt" onClick={(e) => removeItem(i.id)}>
-          X
-        </span>
-      </div>
+      <AccordionItem>
+        <AccordionHeader targetId={n}>{i.advertiser}</AccordionHeader>
+        <AccordionBody accordionId={n}>
+          <div className="d-flex flex-column w-100">
+            {i.description.map((item, index) => {
+              return (
+                <div style={{display: "bock"}}>
+                  <input
+                  style={{marginRight: "3px"}}
+                    id={`selectedsubitem-${index}-${item.id}`}
+                    type="checkbox"
+                  />
+                  <label style={{fontSize: "13px"}} htmlFor={`selectedsubitem-${index}-${item.id}`}>
+                    {item.title}
+                  </label>
+                </div>
+              );
+            })}
+          </div>
+        </AccordionBody>
+      </AccordionItem>
     );
   }
 
@@ -58,6 +112,7 @@ export default function SelectionComponent({
       const updated = prev.filter((i) => i.id !== data.id);
       setAppState((s) => ({ ...s, [appstate_key]: [...updated] }));
     }
+    console.log(data);
   }
 
   function removeItem(id) {
@@ -88,10 +143,12 @@ export default function SelectionComponent({
         <div className="title">
           <span>{appState[appstate_key].length} Selected</span>
         </div>
-        {appState[appstate_key] &&
-          appState[appstate_key]
-            .sort((a, b) => (a.id > b.id ? 1 : -1))
-            .map(getSelected)}
+        <Accordion open={open} toggle={toggle}>
+          {appState[appstate_key] &&
+            appState[appstate_key]
+              .sort((a, b) => (a.id > b.id ? 1 : -1))
+              .map(getSelected)}
+        </Accordion>
       </div>
     </div>
   );

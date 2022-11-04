@@ -25,5 +25,55 @@
       "permission": "Update product",
       "description": "Update product basic information."
     }
+  ],
+  "members": [
+    {
+      "id": 20001,
+      "email": "wdavidson@comicompas.com",
+      "firstname": "William",
+      "lastname": "Davidson"
+    },
+    {
+      "id": 20002,
+      "email": "mercirevon@comicompas.com",
+      "firstname": "Merci",
+      "lastname": "Revon"
+    },
+    {
+      "id": 20003,
+      "email": "jackronaldo@comicompas.com",
+      "firstname": "Jack",
+      "lastname": "Ronaldo"
+    },
+    {
+      "id": 20004,
+      "email": "neosupero@comicompas.com",
+      "firstname": "Neo",
+      "lastname": "Supero"
+    },
+    {
+      "id": 20005,
+      "email": "madironaldo@comicompas.com",
+      "firstname": "Madi",
+      "lastname": "Ronaldo"
+    }
+  ],
+  "advertiser": [
+    {
+      "id": 30001,
+      "advertiser": "BeiGene",
+      "description": [
+        { "id": 30001001, "title": "William" },
+        { "id": 30001002, "title": "David" }
+      ]
+    },
+    {
+      "id": 30002,
+      "advertiser": "RegPharma",
+      "description": [
+        { "id": 30002001, "title": "Pharma" },
+        { "id": 30002002, "title": "Medical" }
+      ]
+    }
   ]
 }

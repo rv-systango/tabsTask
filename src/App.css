@@ -14,3 +14,16 @@ body{
   left: 75px;
   right: 75px;
 }
+
+.accordion{
+  width: 100%;
+}
+.accordion-button {
+  padding: 5px 8px !important;
+  width: 100%;
+  font-size: 14px;
+}
+
+.accordion-button::after{
+  background-size: 20px 20px
+}
