@@ -6,6 +6,7 @@ import {
   AccordionItem,
 } from "reactstrap";
 import { AppContext } from "../../App";
+import ChkBox from "../chkbox/chkbox";
 import "./MultiSelection.scss";
 
 // datatype can be : single/tree
@@ -27,7 +28,27 @@ export default function MultiSelection({
   };
 
   function genHeadings(i, n) {
-    return <div key={`header-i${n}`}>{i}</div>;
+    return <div key={`${i}i${n}`}>{i}</div>;
+  }
+
+  function decideState(item) {
+    let result = false;
+    const selectedData = appState[appstate_key];
+    const selectedItem = selectedData.filter((e) => e.id === item.id)[0];
+    if(!selectedItem) return false;
+    if (item.description?.length === selectedItem?.description?.length)
+      result = true;
+    if (
+      item.description?.length !== selectedItem?.description?.length &&
+      selectedItem.description?.length
+    )
+      result = "indeterminate";
+    if (
+      item.description?.length !== selectedItem?.description?.length &&
+      !selectedItem.description?.length
+    )
+      result = false;
+    return result;
   }
 
   function genItems(i, n) {
@@ -35,17 +56,12 @@ export default function MultiSelection({
     return (
       <div className="list-item" key={`item-i${n}`}>
         <div>
-          <input
+          <ChkBox
             id={`item-i${i.id}`}
-            type="checkbox"
-            checked={
-              JSON.stringify(appState[appstate_key]).includes(i.id)
-                ? true
-                : false
-            }
-            onChange={(e) => onCheckChange(e.target.checked, i)}
+            value={i[keys[0] || "-"]}
+            state={decideState(i)}
+            onChange={() => {onCheckChange(decideState(i), i)}}
           />
-          <label htmlFor={`item-i${i.id}`}>{i[keys[0] || "-"]}</label>
         </div>
         <div>
           {(() => {
@@ -53,7 +69,7 @@ export default function MultiSelection({
               const subArrray = i["description"];
               return subArrray.map((j, index) => {
                 return (
-                  <div>
+                  <div key={j.id}>
                     <input
                       id={`subitem-${j.id}`}
                       type="checkbox"
@@ -120,7 +136,6 @@ export default function MultiSelection({
       setAppState((s) => ({ ...s, [appstate_key]: newState }));
     } else if (isItemExists && isDescriptionExists) {
       // remove sub item (description)
-
       chk.indeterminate = false;
       const newState = [];
       selectedData.forEach((data) => {
@@ -148,13 +163,15 @@ export default function MultiSelection({
   function genSelected(i, n) {
     return (
       <AccordionItem key={`acc-key-${i.id}`}>
-        <AccordionHeader targetId={n}>{i.advertiser}</AccordionHeader>
-        <AccordionBody accordionId={n}>
+        <AccordionHeader targetId={n.toString()}>
+          {i.advertiser}
+        </AccordionHeader>
+        <AccordionBody accordionId={n.toString()}>
           <div className="d-flex flex-column w-100">
             {i.description.map((item, index) => {
               return (
                 <div
-                  key={`selecteditem-key-${i.id}`}
+                  key={`selecteditem-key-${i.id}-${index}`}
                   style={{ display: "bock" }}
                 >
                   <input
@@ -184,7 +201,9 @@ export default function MultiSelection({
   }
 
   function onCheckChange(state, data) {
-    if (state) {
+    const sdata = JSON.stringify(appState[appstate_key]);
+    const isExists = sdata.includes(JSON.stringify(data));
+    if (!isExists) {
       const prev = appState[appstate_key];
       setAppState((s) => ({ ...s, [appstate_key]: [...prev, data] }));
     } else {

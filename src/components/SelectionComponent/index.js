@@ -1,6 +1,7 @@
 import { Tooltip } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../App";
+import ChkBox from "../chkbox/chkbox";
 import "./SelectionComponent.scss";
 
 // datatype can be : single/tree
@@ -19,20 +20,32 @@ export default function SelectionComponent({
   function genItems(i, n) {
     const keysLength = keys.length;
     return (
-      <div className="list-item" key={`item-i${n}`}>
+      <div className="list-item" key={`item-${n}-i${i.id}`}>
         <div>
-          <input
+          <ChkBox
+            id={`item-i${i.id}`}
+            value={i[keys[0] || "-"]}
+            onChange={() => onCheckChange(i)}
+            state={
+              JSON.stringify(appState[appstate_key]).includes(JSON.stringify(i))
+                ? true
+                : false
+            }
+          />
+          {/* <input
             id={`item-i${i.id}`}
             type="checkbox"
             checked={appState[appstate_key].includes(i) ? true : false}
             onChange={(e) => onCheckChange(e.target.checked, i)}
           />
-          <label htmlFor={`item-i${i.id}`}>{i[keys[0] || "-"]}</label>
+          <label htmlFor={`item-i${i.id}`}>{i[keys[0] || "-"]}</label> */}
         </div>
         {keys &&
           keysLength &&
           keys.map((k, m) => {
-            return m > 0 ? <div key={k}>{i[k || "-"]}</div> : <></>;
+            return (
+              m > 0 && <div key={`${k}-${i.id.toString()}`}>{i[k || "-"]}</div>
+            );
           })}
       </div>
     );
@@ -49,8 +62,10 @@ export default function SelectionComponent({
     );
   }
 
-  function onCheckChange(state, data) {
-    if (state) {
+  function onCheckChange( data) {
+    const sdata = JSON.stringify(appState[appstate_key]);
+    const isExists = sdata.includes(JSON.stringify(data));
+    if (!isExists) {
       const prev = appState[appstate_key];
       setAppState((s) => ({ ...s, [appstate_key]: [...prev, data] }));
     } else {
