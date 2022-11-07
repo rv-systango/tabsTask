@@ -57,7 +57,7 @@ export default function MultiSelection({
                     <input
                       id={`subitem-${j.id}`}
                       type="checkbox"
-                      onChange={() => removeSubItem(i.id, j)}
+                      onChange={() => addRemoveSubitems(i, j)}
                       checked={
                         JSON.stringify(appState[appstate_key]).includes(j.id)
                           ? true
@@ -77,35 +77,86 @@ export default function MultiSelection({
     );
   }
 
-  function removeSubItem(itemid, subitem) {
-    const d = JSON.parse(JSON.stringify(appState[appstate_key]));
-    const newState = [];
-    let selectedItem = null;
-    let updatedD = {};
-    d.forEach((i) => {
-      if (i.id === itemid) {
-        selectedItem = i;
-        updatedD = i.description.filter((k) => k.id !== subitem.id);
-      } else {
-        newState.push(i);
-      }
-    });
-    if (selectedItem) {
-      selectedItem.description = updatedD;
+  function addRemoveSubitems(item, subitem) {
+    const selectedData = JSON.parse(JSON.stringify(appState[appstate_key]));
+    const chk = document.getElementById(`item-i${item.id}`);
+    const itemInData = data.filter((i) => i.id == item.id)[0];
+    let itemInNewState = null;
+    chk.indeterminate = false;
+    let isItemExists = false;
+    let isDescriptionExists = false;
+
+    if (selectedData.length) {
+      selectedData.forEach((data) => {
+        if (data.id === item.id) {
+          isItemExists = true;
+          if (
+            JSON.stringify(data.description).includes(JSON.stringify(subitem))
+          )
+            isDescriptionExists = true;
+        }
+      });
     }
-    if (updatedD.length) newState.push(selectedItem);
-    setAppState((s) => ({ ...s, [appstate_key]: newState }));
+
+    if (!isItemExists) {
+      // add full item (advertiser)
+      const preData = appState[appstate_key];
+      preData.push(item);
+      setAppState((s) => ({ ...s, advertiser: [...preData] }));
+      chk.indeterminate = false;
+      chk.checked = true;
+    }
+
+    if (isItemExists && !isDescriptionExists) {
+      // add sub item (description)
+      const newState = [];
+      selectedData.forEach((data) => {
+        if (data.id == item.id) {
+          data.description.push(subitem);
+        }
+        newState.push(data);
+      });
+      itemInNewState = newState.filter((i) => i.id == item.id)[0];
+      setAppState((s) => ({ ...s, [appstate_key]: newState }));
+    } else if (isItemExists && isDescriptionExists) {
+      // remove sub item (description)
+
+      chk.indeterminate = false;
+      const newState = [];
+      selectedData.forEach((data) => {
+        const description = data.description.filter((i) => i.id !== subitem.id);
+        data.description = description;
+        if (data.description.length) {
+          newState.push(data);
+        } else {
+          chk.indeterminate = false;
+          chk.checked = false;
+        }
+      });
+      itemInNewState = newState.filter((i) => i.id == item.id)[0];
+      setAppState((s) => ({ ...s, [appstate_key]: newState }));
+    }
+
+    // set indeterminate state of specific check box
+    if (itemInNewState?.description?.length) {
+      itemInData?.description?.length !== itemInNewState?.description?.length
+        ? (chk.indeterminate = true)
+        : (chk.indeterminate = false);
+    }
   }
 
-  function getSelected(i, n) {
+  function genSelected(i, n) {
     return (
-      <AccordionItem>
+      <AccordionItem key={`acc-key-${i.id}`}>
         <AccordionHeader targetId={n}>{i.advertiser}</AccordionHeader>
         <AccordionBody accordionId={n}>
           <div className="d-flex flex-column w-100">
             {i.description.map((item, index) => {
               return (
-                <div style={{ display: "bock" }}>
+                <div
+                  key={`selecteditem-key-${i.id}`}
+                  style={{ display: "bock" }}
+                >
                   <input
                     style={{ marginRight: "3px" }}
                     id={`selectedsubitem-${index}-${item.id}`}
@@ -114,7 +165,7 @@ export default function MultiSelection({
                         ? true
                         : false
                     }
-                    onChange={() => removeSubItem(i.id, item)}
+                    onChange={() => addRemoveSubitems(i, item)}
                     type="checkbox"
                   />
                   <label
@@ -141,7 +192,6 @@ export default function MultiSelection({
       const updated = prev.filter((i) => i.id !== data.id);
       setAppState((s) => ({ ...s, [appstate_key]: [...updated] }));
     }
-    console.log(data);
   }
 
   function onSearch(e) {
@@ -170,7 +220,7 @@ export default function MultiSelection({
           {appState[appstate_key] &&
             appState[appstate_key]
               .sort((a, b) => (a.id > b.id ? 1 : -1))
-              .map(getSelected)}
+              .map(genSelected)}
         </Accordion>
       </div>
     </div>
