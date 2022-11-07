@@ -201,8 +201,8 @@ export default function MultiSelection({
   }
 
   function onCheckChange(state, data) {
-    const sdata = JSON.stringify(appState[appstate_key]);
-    const isExists = sdata.includes(JSON.stringify(data));
+    const sdata = appState[appstate_key];
+    const isExists = sdata.some((k => k.id === data.id));
     if (!isExists) {
       const prev = appState[appstate_key];
       setAppState((s) => ({ ...s, [appstate_key]: [...prev, data] }));
